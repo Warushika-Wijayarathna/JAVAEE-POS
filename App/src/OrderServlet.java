@@ -14,22 +14,20 @@ import com.google.gson.JsonObject;
 
 @WebServlet(urlPatterns = "/order")
 public class OrderServlet extends HttpServlet {
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        System.out.println("");
         try {
-            // Load the JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
-            // Establish a connection to the database
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MedplusCarePharmacy", "root", "Ijse@1234");
-
-            // Execute the query to fetch customers
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MedplusCarePharmacy", "root", "Ijse@1234")) {
             ResultSet resultSet = connection.prepareStatement("SELECT * FROM `Order`;").executeQuery();
 
-            // Build the JSON response using StringBuilder
             StringBuilder jsonBuilder = new StringBuilder();
             jsonBuilder.append("[");
 
@@ -39,159 +37,108 @@ public class OrderServlet extends HttpServlet {
                     jsonBuilder.append(",");
                 }
 
-                // Format each customer record as a JSON object
-                String customerJson = String.format(
-                        "{\"id\":\"%s\",\"cust_id\":\"%s\",\"user_id\":\"%s\",\"total\":\"%s\",\"date\":\"%s\"}",
+                String orderJson = String.format(
+                        "{\"id\":\"%s\",\"cust_id\":\"%s\",\"total\":\"%s\",\"date\":\"%s\"}",
                         resultSet.getString("o_id"),
                         resultSet.getString("cust_id"),
-                        resultSet.getString("user_id"),
                         resultSet.getString("total"),
                         resultSet.getString("date")
                 );
 
-                jsonBuilder.append(customerJson);
+                jsonBuilder.append(orderJson);
                 first = false;
             }
 
             jsonBuilder.append("]");
-
-            // Close the resources
             resultSet.close();
-            connection.close();
 
-            // Write the JSON response
             resp.getWriter().write(jsonBuilder.toString());
-        } catch (ClassNotFoundException e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\":\"JDBC Driver not found.\"}");
 
-            e.printStackTrace();
+            // print the returning data
+            System.out.println("\n\n\nReturning Data : "+jsonBuilder.toString());
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\":\"Database error occurred.\"}");
             e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-
-
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        Connection connection = null;
-        PreparedStatement orderStatement = null;
-        PreparedStatement lastIdStatement = null;
-        PreparedStatement orderItemStatement = null;
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MedplusCarePharmacy", "root", "Ijse@1234")) {
+            connection.setAutoCommit(false);
 
-        try {
-            // Parse incoming JSON request body
+            BufferedReader reader = request.getReader();
             StringBuilder stringBuilder = new StringBuilder();
             String line;
-            BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
             String requestBody = stringBuilder.toString();
 
-            // Use Gson to convert JSON to Java object
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
-
-            // Extract order and items from JSON
             JsonObject orderJson = jsonObject.getAsJsonObject("order");
             JsonArray itemsJson = jsonObject.getAsJsonArray("items");
 
             String custId = orderJson.get("cust_id").getAsString();
-            String userId = orderJson.get("user_id").getAsString();
             String total = orderJson.get("total").getAsString();
             String date = orderJson.get("date").getAsString();
 
-            if (custId == null || userId == null || total == null || date == null || itemsJson == null) {
+            if (custId == null || total == null || date == null || itemsJson == null) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 resp.getWriter().write("{\"error\":\"Missing required parameters.\"}");
                 return;
             }
 
-            // Load the JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Establish a connection to the database
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MedplusCarePharmacy", "root", "Ijse@1234");
-
-            // Start transaction: disable auto-commit for manual transaction control
-            connection.setAutoCommit(false);
-
-            // Insert new order
-            String orderQuery = "INSERT INTO `Order` (cust_id, user_id, total, date) VALUES (?, ?, ?, ?)";
-            orderStatement = connection.prepareStatement(orderQuery);
-            orderStatement.setString(1, custId);
-            orderStatement.setString(2, userId);
-            orderStatement.setString(3, total);
-            orderStatement.setString(4, date);
-            orderStatement.executeUpdate();
-
-            // Get the last inserted order ID
-            lastIdStatement = connection.prepareStatement("SELECT LAST_INSERT_ID() AS last_id");
-            ResultSet resultSet = lastIdStatement.executeQuery();
-            resultSet.next();
-            String lastId = resultSet.getString("last_id");
-
-            // Insert order items
-            for (int i = 0; i < itemsJson.size(); i++) {
-                JsonObject itemJson = itemsJson.get(i).getAsJsonObject();
-                String itemId = itemJson.get("item_id").getAsString();
-                String qty = itemJson.get("qty").getAsString();
-
-                // Insert each item into the order_item_detail table
-                String itemQuery = "INSERT INTO `order_item_detail` (o_id, item_id, qty) VALUES (?, ?, ?)";
-                orderItemStatement = connection.prepareStatement(itemQuery);
-                orderItemStatement.setString(1, lastId);
-                orderItemStatement.setString(2, itemId);
-                orderItemStatement.setString(3, qty);
-                orderItemStatement.executeUpdate();
+            String orderQuery = "INSERT INTO `Order` (cust_id, total, date) VALUES (?, ?, ?)";
+            try (PreparedStatement orderStatement = connection.prepareStatement(orderQuery)) {
+                orderStatement.setString(1, custId);
+                orderStatement.setString(2, total);
+                orderStatement.setString(3, date);
+                orderStatement.executeUpdate();
             }
 
-            // Commit the transaction
-            connection.commit();
-
-            // Send success response
-            resp.getWriter().write("{\"status\":\"success\"}");
-
-        } catch (ClassNotFoundException | SQLException | JsonSyntaxException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
+            // Fetch the last inserted order ID
+            String lastId = null;
+            String fetchLastOrderQuery = "SELECT o_id FROM `Order` WHERE cust_id = ? ORDER BY o_id DESC LIMIT 1";
+            try (PreparedStatement lastIdStatement = connection.prepareStatement(fetchLastOrderQuery)) {
+                lastIdStatement.setString(1, custId);
+                try (ResultSet resultSet = lastIdStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        lastId = resultSet.getString("o_id");
+                    }
                 }
             }
+
+            if (lastId == null) {
+                throw new SQLException("Failed to retrieve last inserted order ID.");
+            }
+
+            // Insert order items
+            String itemQuery = "INSERT INTO `order_item_detail` (o_id, item_id, qty) VALUES (?, ?, ?)";
+            try (PreparedStatement orderItemStatement = connection.prepareStatement(itemQuery)) {
+                for (int i = 0; i < itemsJson.size(); i++) {
+                    JsonObject itemJson = itemsJson.get(i).getAsJsonObject();
+                    String itemId = itemJson.get("item_id").getAsString();
+                    String qty = itemJson.get("qty").getAsString();
+
+                    orderItemStatement.setString(1, lastId);
+                    orderItemStatement.setString(2, itemId);
+                    orderItemStatement.setString(3, qty);
+                    orderItemStatement.executeUpdate();
+                }
+            }
+
+            connection.commit();
+            resp.getWriter().write("{\"status\":\"success\"}");
+        } catch (SQLException | JsonSyntaxException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\":\"Error occurred while processing the order.\"}");
             e.printStackTrace();
-        } finally {
-            // Close resources and set auto-commit back to true
-            try {
-                if (orderStatement != null) {
-                    orderStatement.close();
-                }
-                if (lastIdStatement != null) {
-                    lastIdStatement.close();
-                }
-                if (orderItemStatement != null) {
-                    orderItemStatement.close();
-                }
-                if (connection != null) {
-                    connection.setAutoCommit(true); // Restore auto-commit to true
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
-
-
 }

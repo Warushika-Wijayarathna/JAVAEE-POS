@@ -43,7 +43,7 @@ function addItemToOrder(selectedItem) {
         // Add a new row for the item
         cartTableBody.append(
             "<tr data-id='" + selectedItem.id + "'>" +
-            "<td>" + selectedItem.id + "</td>" +
+            "<td class='cart_item_code'>" + selectedItem.id + "</td>" +
             "<td>" + selectedItem.name + "</td>" +
             "<td class='price'>" + selectedItem.price + "</td>" +
             "<td>" +
@@ -120,21 +120,25 @@ function loadOrders() {
         url: "http://localhost:8080/GDSE/order",
         type: "GET",
         success: function (data) {
-            var orderTableBody = $("#orderTableBody");
+            var orderTableBody = $("#ordersTableBody");
             orderTableBody.empty();
+
+            // Loop through the data and create rows using template literals
             $.each(data, function (index, order) {
-                orderTableBody.append(
-                    "<tr>" +
-                    "<td>" + order.id + "</td>" +
-                    "<td>" + order.cust_id + "</td>" +
-                    "<td>" + order.user_id + "</td>" +
-                    "<td>" + order.total + "</td>" +
-                    "<td>" + order.date + "</td>" +
-                    // add a view btn
-                    "<td><button class='btn btn-primary' onclick='viewOrder(" + order.id + ")'>View</button></td>" +
-                    "</tr>"
-                );
+                const row = `
+                    <tr data-id="${order.id}">
+                        <td>${order.id}</td>
+                        <td>${order.cust_id}</td>
+                        <td>${order.total}</td>
+                        <td>${order.date}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm view-order-btn" data-id="${order.id}">View</button>
+                        </td>
+                    </tr>`;
+                orderTableBody.append(row);
             });
+
+            console.log("Orders successfully loaded.");
         },
         error: function () {
             alert("Failed to load orders!");
@@ -142,11 +146,18 @@ function loadOrders() {
     });
 }
 
+
 // apply placeOrderButtonAction
 function placeOrderButtonAction() {
+    // Check if the cart is empty
+    var cartEmpty = $("#cartTableBody tr").length === 0;
+    if (cartEmpty) {
+        alert("Your cart is empty. Please add items before placing an order.");
+        return;  // Exit the function if the cart is empty
+    }
+
     var order = {
-        cust_id: $("#custId").val(),
-        user_id: $("Admin").val(),
+        cust_id: $("#orderCustomerId").val(),
         total: $("#orderTotal").text(),
         date: new Date().toISOString().slice(0, 10)
     };
@@ -156,7 +167,7 @@ function placeOrderButtonAction() {
     $("#cartTableBody tr").each(function () {
         var row = $(this);
         items.push({
-            item_id: parseInt(row.find("td:first").text(), 10),
+            item_id: row.find(".cart_item_code").text(),
             qty: parseInt(row.find(".qty").text(), 10)
         });
     });
@@ -179,14 +190,38 @@ function placeOrderButtonAction() {
 }
 
 
+
 function viewOrder(orderId) {
 
 }
+
+
+function loadCustomerIds() {
+    // Fetch all customer ids from the server
+    $.ajax({
+        url: "http://localhost:8080/GDSE/customer",
+        type: "GET",
+        success: function (data) {
+            var customerSelection = $("#orderCustomerId");
+            customerSelection.empty();
+            $.each(data, function (index, customer) {
+                customerSelection.append(
+                    "<option value='" + customer.id + "'>" + customer.id + "</option>"
+                );
+            });
+        },
+        error: function () {
+            alert("Failed to load customer ids!");
+        }
+    });
+}
+
 // Call the loadItems function and getOrderId function when the page is ready
 $(document).ready(function () {
     loadItems();
     getOrderId();  // Fetch the orderId when the page loads
     loadOrders();  // Fetch all orders when the page loads
+    loadCustomerIds();
 
     // Attach the placeOrderButtonAction to the Place Order button
     $("#placeOrderBtn").click(function () {

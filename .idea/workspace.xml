@@ -10,11 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfbe8b9c-798c-40ba-96d8-6aac9f6adfa2" name="Changes" comment="Commit">
-      <change afterPath="$PROJECT_DIR$/App/web/web/web/web/WEB-INF/web.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/src/OrderServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/App/src/OrderServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/web/assets/js/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/App/web/assets/js/Order.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/App/web/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/artifacts/GDSE/GDSE.war" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/GDSE/GDSE.war" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/App/OrderServlet.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/App/OrderServlet.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,7 +212,7 @@
       <workItem from="1734017124113" duration="33000" />
       <workItem from="1734578131050" duration="12126000" />
       <workItem from="1735481716939" duration="22107000" />
-      <workItem from="1735550887086" duration="31734000" />
+      <workItem from="1735550887086" duration="36774000" />
     </task>
     <task id="LOCAL-00001" summary="Commit">
       <option name="closed" value="true" />
@@ -237,11 +238,30 @@
       <option name="project" value="LOCAL" />
       <updated>1735665058179</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Commit">
+      <option name="closed" value="true" />
+      <created>1735667144790</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1735667144790</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
