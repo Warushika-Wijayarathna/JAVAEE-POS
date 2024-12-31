@@ -106,20 +106,38 @@ function calculateBalance() {
 }
 
 // Get the next orderId from the server
+// Get the next orderId from the server
 function getOrderId() {
+    $.ajax({
+        url: "http://localhost:8080/GDSE/latest",  // Modify to fetch the latest order ID from the server
+        type: "GET",
+        success: function (data) {
+            var orderId = "O0001";  // Default ID in case no orders exist
 
-    // Fetch the next orderId from the last row of the orderTableBody table
-    var orderTableBody = $("#orderTableBody");
-    var lastRow = orderTableBody.find("tr:last");
-    var orderId = 1;
-    if (lastRow.length > 0) {
-        orderId = parseInt(lastRow.find("td:first").text(), 10) + 1;
-    }
+            if (data && data.length > 0) {
+                // Assuming the last order has the highest ID
+                var lastOrderId = data[data.length - 1].id;  // Get the last order from the response
+                if (lastOrderId && lastOrderId.startsWith('O')) {
+                    var numericPart = lastOrderId.slice(1);  // Remove the 'O' part
+                    var numericId = parseInt(numericPart, 10);  // Convert to a number
+                    if (!isNaN(numericId)) {
+                        numericId += 1;  // Increment the numeric part
+                        orderId = "O" + numericId.toString().padStart(4, '0');  // Reformat with leading zeros
+                    }
+                }
+            }
 
-    //use innerHTML to set the orderId
-    document.getElementById("orderId").innerHTML = "#"+orderId;
-
+            // Update the displayed order ID
+            document.getElementById("orderId").innerHTML = orderId;
+        },
+        error: function () {
+            alert("Failed to fetch the latest order ID!");
+        }
+    });
 }
+
+
+
 
 // Updated function to load orders
 function loadOrders() {
@@ -245,6 +263,7 @@ function placeOrderButtonAction() {
             alert("Order placed successfully!");
             loadOrders();  // Reload the order table
             getOrderId();  // Get the next orderId
+            loadItems();  // Reload the items table
         },
         error: function () {
             alert("Failed to place order!");

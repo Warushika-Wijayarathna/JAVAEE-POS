@@ -26,93 +26,70 @@ public class OrderView extends HttpServlet {
 
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MedplusCarePharmacy", "root", "Ijse@1234")) {
 
-            // SQL query to fetch order details along with associated items
-            String query = "SELECT o.o_id, o.cust_id, o.total, o.date, i.item_id, i.qty " +
-                    "FROM `Order` o " +
-                    "LEFT JOIN `order_item_detail` i ON o.o_id = i.o_id " +
-                    "ORDER BY o.o_id"; // Ensure orders are ordered by o_id
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            // First query: Fetch all orders
+            String orderQuery = "SELECT o.o_id, o.cust_id, o.total, o.date FROM `Order` o";
+            PreparedStatement orderStatement = connection.prepareStatement(orderQuery);
+            ResultSet orderResultSet = orderStatement.executeQuery();
 
             StringBuilder jsonBuilder = new StringBuilder();
             jsonBuilder.append("[");
 
             boolean firstOrder = true;
-            String currentOrderId = null;
-            StringBuilder itemsJson = new StringBuilder();
 
-            while (resultSet.next()) {
-                String orderId = resultSet.getString("o_id");
-
-                // Start a new order JSON object if a new order is found
-                if (!orderId.equals(currentOrderId)) {
-                    if (!firstOrder) {
-                        // Close the items array and add the order object to the JSON list
-                        if (itemsJson.length() > 0) {
-                            // Remove the last comma from items if present
-                            if (itemsJson.charAt(itemsJson.length() - 1) == ',') {
-                                itemsJson.deleteCharAt(itemsJson.length() - 1);
-                            }
-                            itemsJson.append("]");
-                        }
-
-                        // Add the current order and its items
-                        jsonBuilder.append(String.format(
-                                "{\"id\":\"%s\", \"cust_id\":\"%s\", \"total\":\"%s\", \"date\":\"%s\", \"items\":%s},",
-                                currentOrderId,
-                                resultSet.getString("cust_id"),
-                                resultSet.getString("total"),
-                                resultSet.getString("date"),
-                                itemsJson.toString()
-                        ));
-
-                        // Reset the itemsJson for the next order
-                        itemsJson.setLength(0);
-                    }
-
-                    // Start a new order
-                    currentOrderId = orderId;
-                    itemsJson.append("[");
-
-                    // Start the first order iteration
-                    firstOrder = false;
+            while (orderResultSet.next()) {
+                if (!firstOrder) {
+                    jsonBuilder.append(",");
                 }
 
-                // Check if item_id or qty are not null before appending to avoid null items
-                String itemId = resultSet.getString("item_id");
-                String qty = resultSet.getString("qty");
+                String orderId = orderResultSet.getString("o_id");
+                String customerId = orderResultSet.getString("cust_id");
+                String total = orderResultSet.getString("total");
+                String date = orderResultSet.getString("date");
 
-                if (itemId != null && qty != null) {
-                    String itemJson = String.format(
+                // Start the order JSON structure
+                jsonBuilder.append(String.format(
+                        "{\"id\":\"%s\", \"cust_id\":\"%s\", \"total\":\"%s\", \"date\":\"%s\", \"items\":",
+                        orderId,
+                        customerId,
+                        total,
+                        date
+                ));
+
+                // Second query: Fetch items for the current order
+                String itemQuery = "SELECT i.item_id, i.qty FROM `order_item_detail` i WHERE i.o_id = ?";
+                PreparedStatement itemStatement = connection.prepareStatement(itemQuery);
+                itemStatement.setString(1, orderId);
+                ResultSet itemResultSet = itemStatement.executeQuery();
+
+                // Start the items array
+                jsonBuilder.append("[");
+
+                boolean firstItem = true;
+                while (itemResultSet.next()) {
+                    if (!firstItem) {
+                        jsonBuilder.append(",");
+                    }
+
+                    String itemId = itemResultSet.getString("item_id");
+                    String qty = itemResultSet.getString("qty");
+
+                    jsonBuilder.append(String.format(
                             "{\"item_id\":\"%s\", \"qty\":\"%s\"}",
                             itemId,
                             qty
-                    );
-                    itemsJson.append(itemJson).append(",");
+                    ));
+                    firstItem = false;
                 }
-            }
 
-            // Ensure the last order and items are added to the JSON
-            if (itemsJson.length() > 0) {
-                if (itemsJson.charAt(itemsJson.length() - 1) == ',') {
-                    itemsJson.deleteCharAt(itemsJson.length() - 1);
-                }
-                itemsJson.append("]");
-            }
+                // Close the items array
+                jsonBuilder.append("]}");
 
-            // Add the last order to the final JSON
-            jsonBuilder.append(String.format(
-                    "{\"id\":\"%s\", \"cust_id\":\"%s\", \"total\":\"%s\", \"date\":\"%s\", \"items\":%s}",
-                    currentOrderId,
-                    resultSet.getString("cust_id"),
-                    resultSet.getString("total"),
-                    resultSet.getString("date"),
-                    itemsJson.toString()
-            ));
+                firstOrder = false;
+            }
 
             jsonBuilder.append("]");  // Close the array of orders
 
-            resultSet.close();
+            orderResultSet.close();
 
             // Write the response back to the client
             resp.getWriter().write(jsonBuilder.toString());

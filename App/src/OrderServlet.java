@@ -68,6 +68,12 @@ public class OrderServlet extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MedplusCarePharmacy", "root", "Ijse@1234")) {
             connection.setAutoCommit(false);
 
@@ -132,6 +138,21 @@ public class OrderServlet extends HttpServlet {
                     orderItemStatement.executeUpdate();
                 }
             }
+
+            // deduct the quantity from the stock
+            String deductQuery = "UPDATE Item SET qty = qty - ? WHERE item_id = ?";
+            try (PreparedStatement deductStatement = connection.prepareStatement(deductQuery)) {
+                for (int i = 0; i < itemsJson.size(); i++) {
+                    JsonObject itemJson = itemsJson.get(i).getAsJsonObject();
+                    String itemId = itemJson.get("item_id").getAsString();
+                    String qty = itemJson.get("qty").getAsString();
+
+                    deductStatement.setString(1, qty);
+                    deductStatement.setString(2, itemId);
+                    deductStatement.executeUpdate();
+                }
+            }
+
 
             connection.commit();
             resp.getWriter().write("{\"status\":\"success\"}");
