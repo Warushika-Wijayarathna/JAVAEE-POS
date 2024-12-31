@@ -187,5 +187,9 @@ $(document).ready(function () {
     loadItems();
     getOrderId();  // Fetch the orderId when the page loads
     loadOrders();  // Fetch all orders when the page loads
-    placeOrderButtonAction(); // apply placeOrderButtonAction
+
+    // Attach the placeOrderButtonAction to the Place Order button
+    $("#placeOrderBtn").click(function () {
+        placeOrderButtonAction();
+    });
 });

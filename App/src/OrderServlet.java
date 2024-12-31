@@ -1,10 +1,16 @@
+import com.google.gson.JsonArray;
+import com.google.gson.JsonSyntaxException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.*;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @WebServlet(urlPatterns = "/order")
 public class OrderServlet extends HttpServlet {
@@ -81,6 +87,34 @@ public class OrderServlet extends HttpServlet {
         PreparedStatement orderItemStatement = null;
 
         try {
+            // Parse incoming JSON request body
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            String requestBody = stringBuilder.toString();
+
+            // Use Gson to convert JSON to Java object
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
+
+            // Extract order and items from JSON
+            JsonObject orderJson = jsonObject.getAsJsonObject("order");
+            JsonArray itemsJson = jsonObject.getAsJsonArray("items");
+
+            String custId = orderJson.get("cust_id").getAsString();
+            String userId = orderJson.get("user_id").getAsString();
+            String total = orderJson.get("total").getAsString();
+            String date = orderJson.get("date").getAsString();
+
+            if (custId == null || userId == null || total == null || date == null || itemsJson == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write("{\"error\":\"Missing required parameters.\"}");
+                return;
+            }
+
             // Load the JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -93,36 +127,40 @@ public class OrderServlet extends HttpServlet {
             // Insert new order
             String orderQuery = "INSERT INTO `Order` (cust_id, user_id, total, date) VALUES (?, ?, ?, ?)";
             orderStatement = connection.prepareStatement(orderQuery);
-            orderStatement.setString(1, request.getParameter("cust_id"));
-            orderStatement.setString(2, request.getParameter("user_id"));
-            orderStatement.setString(3, request.getParameter("total"));
-            orderStatement.setString(4, request.getParameter("date"));
+            orderStatement.setString(1, custId);
+            orderStatement.setString(2, userId);
+            orderStatement.setString(3, total);
+            orderStatement.setString(4, date);
             orderStatement.executeUpdate();
 
-            // Get last inserted order ID
-            lastIdStatement = connection.prepareStatement("SELECT LAST_INSERT_ID() as last_id");
+            // Get the last inserted order ID
+            lastIdStatement = connection.prepareStatement("SELECT LAST_INSERT_ID() AS last_id");
             ResultSet resultSet = lastIdStatement.executeQuery();
             resultSet.next();
             String lastId = resultSet.getString("last_id");
 
             // Insert order items
-            String[] items = request.getParameter("items").split(",");
-            for (String item : items) {
-                String[] parts = item.split(":");
+            for (int i = 0; i < itemsJson.size(); i++) {
+                JsonObject itemJson = itemsJson.get(i).getAsJsonObject();
+                String itemId = itemJson.get("item_id").getAsString();
+                String qty = itemJson.get("qty").getAsString();
+
+                // Insert each item into the order_item_detail table
                 String itemQuery = "INSERT INTO `order_item_detail` (o_id, item_id, qty) VALUES (?, ?, ?)";
                 orderItemStatement = connection.prepareStatement(itemQuery);
                 orderItemStatement.setString(1, lastId);
-                orderItemStatement.setString(2, parts[0]);
-                orderItemStatement.setString(3, parts[1]);
+                orderItemStatement.setString(2, itemId);
+                orderItemStatement.setString(3, qty);
                 orderItemStatement.executeUpdate();
             }
 
-            // Commit transaction
+            // Commit the transaction
             connection.commit();
 
             // Send success response
             resp.getWriter().write("{\"status\":\"success\"}");
-        } catch (ClassNotFoundException e) {
+
+        } catch (ClassNotFoundException | SQLException | JsonSyntaxException e) {
             if (connection != null) {
                 try {
                     connection.rollback();
@@ -131,18 +169,7 @@ public class OrderServlet extends HttpServlet {
                 }
             }
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\":\"JDBC Driver not found.\"}");
-            e.printStackTrace();
-        } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
-            }
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\":\"Database error occurred.\"}");
+            resp.getWriter().write("{\"error\":\"Error occurred while processing the order.\"}");
             e.printStackTrace();
         } finally {
             // Close resources and set auto-commit back to true
