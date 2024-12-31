@@ -13,7 +13,7 @@ function loadItems() {
                     "<td>" + item.name + "</td>" +
                     "<td>" + item.price + "</td>" +
                     "<td>" + item.qtyOnHand + "</td>" +
-                    "<td><button class='btn btn-primary' onclick='addItemToOrder(" + JSON.stringify(item) + ")'>Add</button></td>" +
+                    "<td><button class='btn btn-primary' data-item='" + JSON.stringify(item) + "' onclick='addItemToOrderFromData(this)'>Add</button></td>" +
                     "</tr>"
                 );
             });
@@ -23,6 +23,13 @@ function loadItems() {
         }
     });
 }
+
+// New function to handle the 'data-item' attribute
+function addItemToOrderFromData(button) {
+    var selectedItem = JSON.parse($(button).attr('data-item'));  // Deserialize the item data
+    addItemToOrder(selectedItem);
+}
+
 
 // Add the selected item to the cartTableBody table
 function addItemToOrder(selectedItem) {
@@ -114,6 +121,7 @@ function getOrderId() {
 
 }
 
+// Updated function to load orders
 function loadOrders() {
     // Fetch all orders from the server
     $.ajax({
@@ -126,19 +134,25 @@ function loadOrders() {
             // Loop through the data and create rows using template literals
             $.each(data, function (index, order) {
                 const row = `
-                    <tr data-id="${order.id}">
-                        <td>${order.id}</td>
-                        <td>${order.cust_id}</td>
-                        <td>${order.total}</td>
-                        <td>${order.date}</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm view-order-btn" data-id="${order.id}">View</button>
-                        </td>
-                    </tr>`;
+                <tr data-id="${order.id}">
+                    <td>${order.id}</td>
+                    <td>${order.cust_id}</td>
+                    <td>${order.total}</td>
+                    <td>${order.date}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-order-btn" data-id="${order.id}">View</button>
+                    </td>
+                </tr>`;
                 orderTableBody.append(row);
             });
 
             console.log("Orders successfully loaded.");
+
+            // Attach event listener for 'view-order-btn' buttons after appending the rows
+            $(".view-order-btn").click(function () {
+                var orderId = $(this).data("id");
+                viewOrder(orderId);
+            });
         },
         error: function () {
             alert("Failed to load orders!");
@@ -146,6 +160,55 @@ function loadOrders() {
     });
 }
 
+// Corrected viewOrder function
+function viewOrder(orderId) {
+    console.log("Viewing order with ID:", orderId);
+    // Make an AJAX request to retrieve the order details and items
+    $.ajax({
+        url: `http://localhost:8080/GDSE/order_view`,  // Modify with the correct endpoint to get order details
+        type: "GET",
+        success: function (data) {
+            // Find the order with the matching ID
+            var order = data.find(order => order.id === orderId);
+
+            // Check if the order was found
+            if (order) {
+                // Prepare order details for SweetAlert
+                var orderDetails = `
+                    <strong>Order ID:</strong> ${order.id}<br>
+                    <strong>Customer ID:</strong> ${order.cust_id}<br>
+                    <strong>Total:</strong> ${order.total}<br>
+                    <strong>Date:</strong> ${order.date}<br><br>
+                    <strong>Items:</strong><br>
+                `;
+
+                // Prepare item details
+                var itemDetails = order.items.map(function(item) {
+                    return `
+                        <strong>Item ID:</strong> ${item.item_id}<br>
+                        <strong>Quantity:</strong> ${item.qty}<br><br>
+                    `;
+                }).join('');
+
+                // Combine order details and item details
+                var fullDetails = orderDetails + itemDetails;
+
+                // Show SweetAlert with the order and item details
+                Swal.fire({
+                    title: `Order #${order.id}`,
+                    html: fullDetails,
+                    icon: 'info',
+                    confirmButtonText: 'Close'
+                });
+            } else {
+                alert("Order not found!");
+            }
+        },
+        error: function () {
+            alert("Failed to retrieve order details!");
+        }
+    });
+}
 
 // apply placeOrderButtonAction
 function placeOrderButtonAction() {
@@ -187,12 +250,6 @@ function placeOrderButtonAction() {
             alert("Failed to place order!");
         }
     });
-}
-
-
-
-function viewOrder(orderId) {
-
 }
 
 
