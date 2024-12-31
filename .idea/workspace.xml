@@ -9,68 +9,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfbe8b9c-798c-40ba-96d8-6aac9f6adfa2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/GDSE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/apache_tomcat_11_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/hibernate_core_6_2_10_Final.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/javax_json_1_1_4.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/lombok.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/mysql_connector_j_8_4_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/App.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/src/CustomerServlet.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/src/ItemServlet.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/assets/js/Customer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/assets/js/Item.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/assets/js/Order.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/assets/js/jquery-3.7.1.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/web/web/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/App/web/web2/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/Application-1.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/CrudDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/DAOFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/SuperDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/CustomerDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/ItemDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/OrderDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/OrderDetailDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/impl/CustomerDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/impl/ItemDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/impl/OrderDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/dao/custom/impl/OrderDetailDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/entity/Customer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/entity/Item.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/entity/Order.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/entity/OrderDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/model/CustomerModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/model/ItemModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/model/OrderDetailModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/model/OrderModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/src/presentation/CustomerServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/web/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/web/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Application-1/web/web/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HelloServlet/HelloServlet.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HelloServlet/src/Sample.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HelloServlet/web/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HelloServlet/web/web/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HelloServlet/web/web/assets/js/jquery-3.7.1.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Mapping/Mapping.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Mapping/src/MultipleMapping.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyServer/MyServer.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server2/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server2/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server2/src/main/webapp/index.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/mysql-connector-j-8.4.0.jar" afterDir="false" />
+    <list default="true" id="bfbe8b9c-798c-40ba-96d8-6aac9f6adfa2" name="Changes" comment="Commit">
+      <change afterPath="$PROJECT_DIR$/App/src/OrderServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/src/ItemServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/App/src/ItemServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/web/assets/js/Item.js" beforeDir="false" afterPath="$PROJECT_DIR$/App/web/assets/js/Item.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/web/assets/js/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/App/web/assets/js/Order.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/App/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/GDSE/GDSE.war" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/GDSE/GDSE.war" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/App/ItemServlet.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/App/ItemServlet.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,8 +29,8 @@
       <list>
         <option value="HTML File" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="JavaScript File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -114,39 +61,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;JavaScript Debug.index.html.executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Tomcat Server.Tomcat 11.0.2-1.executor&quot;: &quot;Run&quot;,
-    &quot;Tomcat Server.Tomcat 11.0.2.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/user/IdeaProjects/JAVAEE/App/web&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.3587339&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.applicationServers&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "JavaScript Debug.index.html.executor": "Run",
+    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Tomcat Server.Tomcat 11.0.2-1.executor": "Run",
+    "Tomcat Server.Tomcat 11.0.2.executor": "Run",
+    "git-widget-placeholder": "master",
+    "jdk.selected.JAVA_MODULE": "17",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/user/IdeaProjects/JAVAEE/App/web",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.3587339",
+    "settings.editor.selected.configurable": "preferences.applicationServers",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/App/web" />
@@ -267,8 +214,25 @@
       <workItem from="1734017124113" duration="33000" />
       <workItem from="1734578131050" duration="12126000" />
       <workItem from="1735481716939" duration="22107000" />
-      <workItem from="1735550887086" duration="20538000" />
+      <workItem from="1735550887086" duration="29301000" />
     </task>
+    <task id="LOCAL-00001" summary="Commit">
+      <option name="closed" value="true" />
+      <created>1735656062635</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1735656062635</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Commit">
+      <option name="closed" value="true" />
+      <created>1735656249001</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1735656249001</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -276,5 +240,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commit" />
   </component>
 </project>

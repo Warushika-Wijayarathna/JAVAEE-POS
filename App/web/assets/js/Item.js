@@ -39,7 +39,7 @@ $(document).ready(function () {
             id: $('#itemCode').val().trim(),
             name: $('#itemName').val().trim(),
             price: $('#itemPrice').val().trim(),
-            qtyOnHand: $('#itemQtyOnHand').val().trim()
+            qtyOnHand: $('#itemQtyOnHand').val().trim(), // Ensure qtyOnHand is included
         };
 
         console.log('Item Data:', itemData); // Log the data to ensure qtyOnHand is included

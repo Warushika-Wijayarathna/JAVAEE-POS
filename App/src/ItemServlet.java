@@ -105,7 +105,6 @@ public class ItemServlet extends HttpServlet {
             statement.setString(3, price);
             statement.setString(4, qtyOnHand);
 
-
             int rowsAffected = statement.executeUpdate();
             resp.setStatus(rowsAffected > 0 ? HttpServletResponse.SC_CREATED : HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
