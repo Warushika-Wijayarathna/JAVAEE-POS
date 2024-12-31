@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer & Item Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Navigation Header -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Company</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#customerSection">Customer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#itemSection">Item</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Place Order</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Customer Section -->
+    <section id="customerSection" class="mb-5">
+        <h3>Customer Form</h3>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="customerId" class="form-label">Customer ID</label>
+                <input type="text" class="form-control" id="customerId" placeholder="Enter Customer ID">
+            </div>
+            <div class="col-md-4">
+                <label for="customerName" class="form-label">Customer Name</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Enter Customer Name">
+            </div>
+            <div class="col-md-4">
+                <label for="customerEmail" class="form-label">Customer Email</label>
+                <input type="email" class="form-control" id="customerEmail" placeholder="Enter Customer Email">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-end">
+                <button class="btn btn-success" id="addCustomerBtn">Add Customer</button>
+            </div>
+        </div>
+
+        <!-- Customer Details Table -->
+        <div class="mt-4">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                <!-- Dynamic rows will be added here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Item Section -->
+    <section id="itemSection" class="mb-5" style="display: none">
+        <h3>Item Form</h3>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="itemCode" class="form-label">Item Code</label>
+                <input type="text" class="form-control" id="itemCode" placeholder="Enter Item Code">
+            </div>
+            <div class="col-md-4">
+                <label for="itemName" class="form-label">Item Name</label>
+                <input type="text" class="form-control" id="itemName" placeholder="Enter Item Name">
+            </div>
+            <div class="col-md-4">
+                <label for="itemPrice" class="form-label">Item Price</label>
+                <input type="number" class="form-control" id="itemPrice" placeholder="Enter Item Price">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-end">
+                <button class="btn btn-success" id="addItemBtn">Add Item</button>
+            </div>
+        </div>
+
+        <!-- Item Details Table -->
+        <div class="mt-4">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                <tr>
+                    <th>Item Code</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="itemTableBody">
+                <!-- Dynamic rows will be added here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Combined AJAX Script -->
+<script>
+    $(document).ready(function () {
+        $(document).ready(function () {
+            // Fetch customers from the server on page load
+            function fetchCustomers() {
+                $.ajax({
+                    url: 'http://localhost:9090/Application_1_Web_exploded/customer',
+                    method: 'GET',
+                    success: function (data) {
+                        const tableBody = $('#customerTableBody');
+                        tableBody.empty();
+                        data.forEach(customer => {
+                            const row = `
+                   <tr data-id="${customer.id}">
+                     <td>${customer.id}</td>
+                     <td>${customer.name}</td>
+                     <td>${customer.email}</td>
+                     <td>
+                       <button class="btn btn-warning btn-sm edit-btn" data-id="${customer.id}">Edit</button>
+                       <button class="btn btn-danger btn-sm delete-btn" data-id="${customer.id}">Delete</button>
+                     </td>
+                   </tr>`;
+                            tableBody.append(row);
+                        });
+                    },
+                    error: function () {
+                        alert('Failed to fetch customers!');
+                    }
+                });
+            }
+
+
+            // Add customer via AJAX
+            $('#addCustomerBtn').on('click', function () {
+                const customerId = $('#customerId').val().trim();
+                const customerName = $('#customerName').val().trim();
+                const customerEmail = $('#customerEmail').val().trim();
+
+
+                if (customerId && customerName && customerEmail) {
+                    $.ajax({
+                        url: 'http://localhost:9090/Application_1_Web_exploded/customer',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            id: customerId,
+                            name: customerName,
+                            email: customerEmail,
+                        }),
+                        success: function () {
+                            fetchCustomers();
+                            $('#customerId').val('');
+                            $('#customerName').val('');
+                            $('#customerEmail').val('');
+                            alert('Customer added successfully!');
+                        },
+                        error: function () {
+                            alert('Failed to add customer!');
+                        }
+                    });
+                } else {
+                    alert('Please fill out all fields!');
+                }
+            });
+
+
+            // Edit button functionality (open modal with customer details)
+            $(document).on('click', '.edit-btn', function () {
+                const row = $(this).closest('tr');
+                const customerId = row.find('td:eq(0)').text();
+                const customerName = row.find('td:eq(1)').text();
+                const customerEmail = row.find('td:eq(2)').text();
+
+
+                // Populate modal with customer data
+                $('#modalCustomerId').val(customerId);
+                $('#modalCustomerName').val(customerName);
+                $('#modalCustomerEmail').val(customerEmail);
+
+
+                // Show modal
+                $('#editModal').modal('show');
+            });
+
+
+            // Save changes to customer details
+            $('#saveCustomerBtn').on('click', function () {
+                const customerId = $('#modalCustomerId').val();
+                const customerName = $('#modalCustomerName').val().trim();
+                const customerEmail = $('#modalCustomerEmail').val().trim();
+
+
+                if (customerName && customerEmail) {
+                    $.ajax({
+                        url: `http://localhost:9090/Application_1_Web_exploded/customer`,
+                        method: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            id: customerId,
+                            name: customerName,
+                            email: customerEmail,
+                        }),
+                        success: function () {
+                            fetchCustomers();
+                            $('#editModal').modal('hide');
+                            alert('Customer details updated successfully!');
+                        },
+                        error: function () {
+                            alert('Failed to update customer!');
+                        }
+                    });
+                } else {
+                    alert('Please fill out all fields!');
+                }
+            });
+
+
+            // Delete button functionality
+            $(document).on('click', '.delete-btn', function () {
+                const row = $(this).closest('tr');
+                const customerId = row.data('id');
+
+
+                if (confirm('Are you sure you want to delete this customer?')) {
+                    $.ajax({
+                        url: `http://localhost:9090/Application_1_Web_exploded/customer?id=${customerId}`,
+                        method: 'DELETE',
+                        success: function () {
+                            fetchCustomers();
+                            alert('Customer deleted successfully!');
+                        },
+                        error: function () {
+                            alert('Failed to delete customer!');
+                        }
+                    });
+                }
+            });
+
+
+            // Initial fetch
+            fetchCustomers();
+        });
+        // Item Section Logic
+        function fetchItems() {
+            // Fetch items logic
+        }
+        $('#addItemBtn').on('click', function () {
+            // Add item logic
+        });
+        $(document).on('click', '.edit-item-btn', function () {
+            // Edit item logic
+        });
+        $('#saveItemBtn').on('click', function () {
+            // Save item logic
+        });
+        $(document).on('click', '.delete-item-btn', function () {
+            // Delete item logic
+        });
+
+        // Initial fetch for both sections
+        fetchItems();
+
+        // Navigation logic
+
+        // catch the click event on the nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (event) {
+                // Prevent the default action
+                event.preventDefault();
+
+                // Get the section ID from the href attribute
+                const sectionId = this.getAttribute('href').replace('#', '');
+
+                // Show the selected section
+                showSection(sectionId);
+            });
+        });
+        function showSection(sectionId) {
+            // Hide all sections
+            document.getElementById('customerSection').style.display = 'none';
+            document.getElementById('itemSection').style.display = 'none';
+
+            // Show the selected section
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+    });
+</script>
+</body>
+</html>
